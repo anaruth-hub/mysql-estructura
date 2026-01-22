@@ -1,4 +1,6 @@
--- 02_seed.sql
+-- =========================================================
+-- OPTICA - 02_seed.sql
+-- =========================================================
 USE mydb;
 
 -- 1) PROVIDERS
@@ -10,11 +12,9 @@ VALUES
 
 -- 2) EMPLOYEES
 INSERT INTO employee (name)
-VALUES
-('Laura Pérez'),
-('Carlos Gómez');
+VALUES ('Laura Pérez'), ('Carlos Gómez');
 
--- 3) CUSTOMERS (primero sin recomendador)
+-- 3) CUSTOMERS (sin recomendador)
 INSERT INTO customer (name, address, number_phone, email, date_register, id_recommender)
 VALUES
 ('Ana Torres',  'Av. Diagonal 123', '600111222', 'ana@mail.com',  '2025-01-10', NULL),
@@ -32,22 +32,26 @@ SET id_recommender = (
 )
 WHERE name = 'Luis Martín';
 
--- 4) GLASSES (necesita provider)
+-- 4) GLASSES
 INSERT INTO glasses (brand, mount_tipe, mount_color, price, id_provider)
 VALUES
-('Ray-Ban', 'Metal',    'Negro', 120.50, (SELECT id_provider FROM provider WHERE name='Proveedor Óptico SA' LIMIT 1)),
-('Oakley',  'Plástico', 'Azul',   95.00, (SELECT id_provider FROM provider WHERE name='VisionDistrib SL' LIMIT 1));
+('Ray-Ban', 'Metal',    'Negro', 120.50,
+ (SELECT id_provider FROM provider WHERE name='Proveedor Óptico SA' LIMIT 1)
+),
+('Oakley',  'Plástico', 'Azul',   95.00,
+ (SELECT id_provider FROM provider WHERE name='VisionDistrib SL' LIMIT 1)
+);
 
--- 5) SALES (todo con ids existentes)
+-- 5) SALES
 INSERT INTO sales (sale_date, id_customer, id_employee, id_glasses)
 VALUES
 ('2026-01-16',
  (SELECT id_customer FROM customer WHERE name='Ana Torres' LIMIT 1),
  (SELECT id_employee FROM employee WHERE name='Laura Pérez' LIMIT 1),
- (SELECT id_glasses FROM glasses WHERE brand='Ray-Ban' LIMIT 1)
+ (SELECT id_glasses  FROM glasses  WHERE brand='Ray-Ban' LIMIT 1)
 ),
 ('2026-01-17',
  (SELECT id_customer FROM customer WHERE name='Luis Martín' LIMIT 1),
  (SELECT id_employee FROM employee WHERE name='Carlos Gómez' LIMIT 1),
- (SELECT id_glasses FROM glasses WHERE brand='Oakley' LIMIT 1)
+ (SELECT id_glasses  FROM glasses  WHERE brand='Oakley' LIMIT 1)
 );
